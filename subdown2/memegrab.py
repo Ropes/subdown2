@@ -6,6 +6,7 @@
 
 import os, re, sys
 import requests
+from lxml import etree
 
 #Define home folder
 home_folder = os.getenv('HOME') + "/"
@@ -21,7 +22,20 @@ def set_dir(todir):
     except:
         print 'Error setting directory:', OSError
 
-def get_image_qm(url, todir):
+
+def img_details(html_src):
+    '''Given html source, parse out the main image url and title.
+    returns tuple: (image_url, image_title)'''
+
+    tree = etree.HTML(html_src)
+    img_obj = tree.xpath("//img[@class='viewpost-image']").pop()
+    dl_url = img_obj.attrib['src']
+
+    header = tree.xpath("//h2[@class='viewpost-title']").pop()
+    title = header.text
+    return dl_url, title
+
+def get_image_qm(html_src, todir):
     #print url
     """ Given the URL and directory, download the image page's html for parsing.
     Parse the full html to find the important bit concerning the image's actual host location but looking in the 'leftside' content div wrapper.
@@ -29,18 +43,10 @@ def get_image_qm(url, todir):
     Download the image and save to the given directory!
     """
 
-        #DOTALL mode must be specified in order to pull html
-    good_stuff = re.findall(r'<div id=\"leftside\">.*<div id=\"rightside\"', url, re.DOTALL)
-        #print good_stuff 
+    img_url, title = img_details(html_src)
     
-    image = re.findall(r'src=\"(.*\.jpg)\"', good_stuff[0]).pop()
-        #print 'Grabbing image from:', image
-    
-    title = re.findall(r'alt="([\w|\-|\s{1|2}]+)', good_stuff[0]).pop()
-    
-        #set_dir(todir)
     #urllib.urlretrieve(image, todir+title+'.jpg')
-    r = requests.get(image)
+    r = requests.get(img_url)
     f = open(todir+title+'.jpg','w')
     f.write(r.text)
     f.close()
