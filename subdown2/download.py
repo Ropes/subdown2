@@ -5,7 +5,6 @@ import re
 import requests
 import md5
 import os
-import twitter
 import datetime
 import threading
 import Queue
@@ -126,6 +125,7 @@ class Downloader:
     def Tumblr(self, link):
         self.output(self.help % link, True)
     def Twitter(self, link):
+        import twitter
         api = twitter.Api()
         try:
             twitter_id = int(link.split('/status/')[-1])

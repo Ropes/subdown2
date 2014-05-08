@@ -2,7 +2,6 @@
 
 import sys
 import time
-import gui
 import os
 import download
 import datetime
