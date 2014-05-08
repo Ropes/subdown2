@@ -6,6 +6,7 @@ import os
 from subdown2 import memegrab
 
 base_resources = '{}/subdown2/test/resources/'.format(os.getcwd())
+target_resources = '{}/subdown2/test/target/'.format(os.getcwd())
 
 class MemeGrabTest(unittest.TestCase):
     jake = 'http://www.quickmeme.com/meme/6n0y/'
@@ -29,5 +30,14 @@ class MemeGrabTest(unittest.TestCase):
             self.assertEqual(img_meta[0], found[0])
             self.assertEqual(img_meta[1], found[1])
 
-
+    def test_image_saving(self):
+        with open('{}{}'.format(base_resources, 'jake.html'), 'r') as fd:
+            html = fd.read()
+            #todir = '{}{}'.format(target_resources)
+            memegrab.get_image_qm(html, target_resources)
+            fname = 'sucking at something  is the first step to becoming sorta good at something.jpg'
+            self.assertTrue(os.path.isfile(\
+                        '{}{}'.format(target_resources, fname)))
+#TODO: Figure out how to verify image
                 
+

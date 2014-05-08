@@ -45,12 +45,9 @@ def get_image_qm(html_src, todir):
 
     img_url, title = img_details(html_src)
     
-    #urllib.urlretrieve(image, todir+title+'.jpg')
     r = requests.get(img_url)
-    f = open(todir+title+'.jpg','w')
-    f.write(r.text)
-    f.close()
-        #print title+'.jpg', 'Saved to:',todir
+    with open(todir+title+'.jpg','wb') as f:
+        f.write(r.content)
 
 
 def main():    
